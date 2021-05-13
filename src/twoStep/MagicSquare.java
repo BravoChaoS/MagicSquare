@@ -21,7 +21,7 @@ public class MagicSquare {
     /**
      * Instantiates a new Magic square. Add mutate methods to List
      *
-     * @param n the n
+     * @param n the board size
      */
     MagicSquare(int n) {
         this.n = n;
@@ -36,7 +36,7 @@ public class MagicSquare {
     /**
      * Read magic square from file
      *
-     * @param fn the fn
+     * @param fn the filename
      * @throws IOException the io exception
      */
     public void readMs(String fn) throws IOException {
@@ -94,8 +94,8 @@ public class MagicSquare {
     /**
      * Evaluate the error of rows and columns (Step 1 of the shorter paper)
      *
-     * @param b the b
-     * @return the int
+     * @param b the board
+     * @return the error
      */
     public int evl1(int[][] b) {
         int error = 0, sum;
@@ -120,8 +120,8 @@ public class MagicSquare {
     /**
      * Evaluate the error of two diagonals (Step 2 of the shorter paper)
      *
-     * @param b the b
-     * @return the int
+     * @param b the board
+     * @return the error
      */
     public int evl2(int[][] b) {
         int error = 0, sum;
@@ -144,8 +144,8 @@ public class MagicSquare {
     /**
      * Evaluate the error of magic square (for the longer paper)
      *
-     * @param b the b
-     * @return the int
+     * @param b the board
+     * @return the error
      */
     public int evl(int[][] b){
         return evl1(b) + evl2(b);
@@ -154,7 +154,7 @@ public class MagicSquare {
     /**
      * Mutate the magic square
      *
-     * @return the int [ ] [ ]
+     * @return the mutated square
      */
     public int[][] getNext(){
         return mutates.get(0).mutate(this);
@@ -172,7 +172,7 @@ public class MagicSquare {
         ms.readMs("1.in");
         ms.fill();
         ms.show();
-        System.out.println(ms.evl1(ms.board));
+        System.out.println(ms.evl(ms.board));
 
         int[][] best = ms.board.clone();
         int min_error = ms.evl(ms.board);
@@ -182,11 +182,11 @@ public class MagicSquare {
         for (int gen = 0; gen < 1000000; ++gen) {
             int[][] nxt = ms.getNext();
             int eval = ms.evl(nxt);
-            if (eval <= min_error) {
+            if (eval <= min_error) { // better solution
                 min_error = eval;
-                best = nxt.clone();
+                best = nxt;
                 ms.board = nxt;
-            } else if (random.nextDouble() < 0.001){
+            } else if (random.nextDouble() < 0.001){ // worse solution with probability
                 ms.board = nxt;
             }
             System.out.printf("gen: %d, error: %d\n", gen, ms.evl(ms.board));
